@@ -3,8 +3,8 @@ package main
 import "fmt"
 
 type Range struct {
-	Lo	float64
-	Hi	float64
+	Lo float64
+	Hi float64
 }
 
 func (r *Range) has(x float64) bool {
@@ -27,6 +27,8 @@ func NewBracket(lo, hi, p float64) Bracket {
 }
 
 var brackets = []Bracket{
+	// 2011 tax brackets.
+	// http://en.wikipedia.org/wiki/Income_tax_in_the_United_States#Year_2011_income_brackets_and_tax_rates
 	NewBracket(0, 8.5e3, 0.10),
 	NewBracket(8.5e3+1, 34.5e3, 0.15),
 	NewBracket(34.5e3+1, 83.6e3, 0.25),
@@ -36,6 +38,7 @@ var brackets = []Bracket{
 }
 
 func main() {
+	// Sample income rates.
 	income := []float64{9e3, 1e4, 15e3, 2e4, 3e4, 3e5, 3e6, 3e7, 3e9}
 
 	for _, i := range income {
@@ -43,13 +46,12 @@ func main() {
 		for _, b := range brackets {
 			if b.Range.has(i) {
 				if i < b.Hi {
+					// This is the last bracket for this income.
 					tax += b.Percentage.apply(i - b.Lo)
+					break
 				} else {
 					tax += b.Percentage.apply(b.Hi - b.Lo)
 				}
-			} else {
-				// fmt.Println("Not in bracket:", i, b)
-				break
 			}
 		}
 		fmt.Printf("Tax for %v is %v. Effective rate is %v\n", i, tax, tax/i)
